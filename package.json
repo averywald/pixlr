@@ -1,0 +1,21 @@
+{
+  "name": "pixlr",
+  "version": "0.1.0",
+  "description": "a collaborative pixel-art space",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "author": "ave5auce",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.2.0",
+    "mongodb": "^3.6.2",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7"
+  }
+}
