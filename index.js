@@ -7,7 +7,7 @@ let app = express();
 // const helmet = require('helmet');
 const httpServer = require('http').createServer(app);
 const io = require('socket.io')(httpServer);
-// var mongoClient = require('mongodb').MongoClient;
+var mongoClient = require('mongodb').MongoClient;
 // const morgan = require('morgan');
 // const path = require('path');
 
@@ -26,6 +26,7 @@ app.use(express.static('public')); // set up static file serving root
 
 // serve app core
 app.get('/', (res) => {
+
     // specify options to pass with served file
     const options = {
         // root path to serve from
@@ -42,58 +43,74 @@ app.get('/', (res) => {
     res.sendFile('index.html', options, (err) => {
         if (err) { console.log(err) }
     });
+    
 });
 
-// posting a pixl modification event
-// app.post('/', async (req, res) => {
-//     try {
-//         // send client a request receipt
-//         res.send(req.body);
-//         // check database for records with the same coordinates
-//         const filter = { coordinates: { $eq: req.body.coordinates } };
-//         // connect to database
-//         const client = await mongoClient.connect(process.env.MONGO_URI,
-//             { useNewUrlParser: true, useUnifiedTopology: true });
-//         // select main database
-//         const d = client.db('pixl');
-//         // check if pixel exists in database table at the same coordinates
-//         const result = await d.collection('map').updateOne(filter, { $set: req.body }, { upsert: true });
-//         // log result action to console
-//         if (result.matchedCount > 0) {
-//             console.log(`${result.matchedCount} docs matched; updated ${result.modifiedCount} docs`);
-//         } else { console.log('created new entry') }
-//         // close database connection
-//         client.close();
-//     } catch (error) {
-//         console.log(error);
-//     }
-// });
+async function retrieve() {
+    // establish connection to MongoDB
+    const client = await mongoClient.connect(process.env.MONGO_URI,
+        { useNewUrlParser: true, useUnifiedTopology: true });
+    // the database we want to use
+    const d = client.db('pixl');
+    // get the pixel data from the 'map' table
+    const items = await d.collection('map').find({}).toArray();
+    // close the connection
+    client.close();
+    // hand off data
+    return items;
+}
 
-// serve index file and send updates from database
-// app.get('/update', async (req, res, next) => {
-//     const client = await mongoClient.connect(process.env.MONGO_URI,
-//         { useNewUrlParser: true, useUnifiedTopology: true });
-//     const d = client.db('pixl');
-//     const items = await d.collection('map').find({}).toArray();
-//     console.log(`retreived /update: ${items}`);
-            
-//     client.close();
-
-//     res.send(items);
-// });
+async function updateMaster(data) {
+    try {
+        // check database for records with the same coordinates
+        const filter = { coordinates: { $eq: data.coordinates } };
+        // connect to database
+        const client = await mongoClient.connect(process.env.MONGO_URI,
+            { useNewUrlParser: true, useUnifiedTopology: true });
+        // select main database
+        const d = client.db('pixl');
+        // check if pixel exists in database table at the same coordinates
+        const result = await d.collection('map').updateOne(filter, { $set: data }, { upsert: true });
+        // log result action to console
+        if (result.matchedCount > 0) {
+            console.log(`${result.matchedCount} docs matched; updated ${result.modifiedCount} docs`);
+        } else { console.log('created new entry') }
+        // close database connection
+        client.close();
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 // a client connects
 io.on('connection', socket => {
-    socket.emit('update', 'hi from the server'); // send hello message
+
+    function updateClient() {
+        // get the canvas master copy
+        retrieve().then(data => {
+            // send to the client
+            socket.emit('update', data);
+        });
+    }
+
+    // send the client the current master copy
+    updateClient();
 
     // client clicks somewhere on the canvas
     socket.on('click', data => {
-        console.log(data);
+        // update the master canvas copy
+        updateMaster(data);
+
+        // send the updates to the client
+        updateClient();
     });
+
 });
 
 // have the app listen to traffic at the set port
 httpServer.listen(port, () => {
+
     // log port listening message to server console
     console.log(`listening at http://localhost:${port}`);
+
 });
