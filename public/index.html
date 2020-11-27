@@ -4,9 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pixlpaint.io</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script>
+        window.onload = () => {
+            var socket = io();
+
+            socket.on('hey there', data => {
+                console.log(data);
+            });
+        };
+    </script> -->
 </head>
 <!-- style="margin: 0; padding: 0;" -->
 <body>
+    <h2>hello from index</h2>
     <!-- need a navbar -->
     <!-- need a color pallette div -->
     <canvas id="pixl"></canvas>
