@@ -11,8 +11,6 @@ const io = require('socket.io')(httpServer);
 // const morgan = require('morgan');
 // const path = require('path');
 
-// const io_client = require('socket.io-client');
-
 dotenv.config(); // allow for .env global imports
 const port = process.env.PORT || 4200; // specify ports to use
 
@@ -84,8 +82,14 @@ app.get('/', (res) => {
 //     res.send(items);
 // });
 
+// a client connects
 io.on('connection', socket => {
-    socket.emit('hey there', 'hi from the server');
+    socket.emit('update', 'hi from the server'); // send hello message
+
+    // client clicks somewhere on the canvas
+    socket.on('click', data => {
+        console.log(data);
+    });
 });
 
 // have the app listen to traffic at the set port
