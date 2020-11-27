@@ -105,30 +105,29 @@ async function sendUpdate(pixel) {
 }
 
 window.onload = () => {
-    // get newest data when the page loads
-    getUpdates().then((data) => {
-        data.forEach(el => { renderUpdates(el) });
-    });
+    // socket.io entry point
+    var socket = io();
 
-    // recurring update loop
-    var intervalID = setInterval(() => {
-        // get new updates
-        getUpdates().then((data) => {
-            data.forEach(el => { renderUpdates(el) });
-        });
-    }, 3000);
+    // the server sends the client the canvas master copy
+    socket.on('update', data => {
+        console.log(data);
+    });
 
     // click event listener on the canvas element
     canv.addEventListener('click', (e) => {
-        // initialize new pixel object
-        let p = createPixel(e.clientX, e.clientY, 255);
-        // POST to server
-        sendUpdate(p).then(() => {
-            getUpdates().then((data) => {
-                data.forEach(el => { renderUpdates(el) });
-            });
-        });
-        // clear interval to immediately reflect changes
-        clearInterval();
+
+        // send the pixel to the server
+        socket.emit('click', createPixel(e.clientX, e.clientY, 255));
+
+        // // initialize new pixel object
+        // let p = createPixel(e.clientX, e.clientY, 255);
+        // // POST to server
+        // sendUpdate(p).then(() => {
+        //     getUpdates().then((data) => {
+        //         data.forEach(el => { renderUpdates(el) });
+        //     });
+        // });
+        // // clear interval to immediately reflect changes
+        // clearInterval();
     });
 };
