@@ -63,41 +63,10 @@ function createPixel(x, y, color) {
     return pixl;
 }
 
-// request new data from server
-async function getUpdates() {
-    const newData = await fetch('/update', {
-        method: 'GET',
-        mode: 'same-origin',
-        cache: 'reload',
-        referrerPolicy: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    // returns a promise
-    return newData.json();
-}
-
 function renderUpdates(data) {
     let p = createPixel(data.coordinates.x, data.coordinates.y, data.rgbaVals);
     canv.getContext('2d').putImageData(p.imgData, p.coordinates.x, p.coordinates.y);
  }
-
-// xmlhttp post to server db
-async function sendUpdate(pixel) {
-    const response = await fetch('/', {
-        method: 'POST',
-        mode: 'same-origin',
-        cache: 'no-cache',
-        referrerPolicy: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(pixel)
-    });
-    // returns a promise
-    return response.json();
-}
 
 window.onload = () => {
 
