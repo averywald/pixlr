@@ -105,12 +105,15 @@ async function sendUpdate(pixel) {
 }
 
 window.onload = () => {
+
     // socket.io entry point
     var socket = io();
 
     // the server sends the client the canvas master copy
     socket.on('update', data => {
-        console.log(data);
+
+        data.forEach(pixlObj => renderUpdates(pixlObj));
+
     });
 
     // click event listener on the canvas element
@@ -119,15 +122,6 @@ window.onload = () => {
         // send the pixel to the server
         socket.emit('click', createPixel(e.clientX, e.clientY, 255));
 
-        // // initialize new pixel object
-        // let p = createPixel(e.clientX, e.clientY, 255);
-        // // POST to server
-        // sendUpdate(p).then(() => {
-        //     getUpdates().then((data) => {
-        //         data.forEach(el => { renderUpdates(el) });
-        //     });
-        // });
-        // // clear interval to immediately reflect changes
-        // clearInterval();
     });
+
 };
