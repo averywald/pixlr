@@ -7,9 +7,9 @@ const PIXELSIZE = 10;
 
 // get the canvas element from DOM
 var canv = document.getElementById('pixl');
-
-// get the dimensions of the canvas element
-const cWidth = canv.width, cHeight = canv.height;
+// resize canvas
+canv.width = window.innerWidth;
+canv.height = window.innerHeight;
 
 // adjust the pixel's coordinates to conform to grid
 function clipClickToBounds(coord) {
@@ -21,7 +21,7 @@ function clipClickToBounds(coord) {
 
 function getColorIndicesForCoord(x, y) {
     // REF: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
-    const red = y * (cWidth * 4) + x * 4;
+    const red = y * (canv.pageX * 4) + x * 4;
     return {
         r: red,
         g: red + 1,
@@ -119,8 +119,13 @@ window.onload = () => {
     // click event listener on the canvas element
     canv.addEventListener('click', (e) => {
 
-        // send the pixel to the server
+        // debug
+        console.log(e.pageX, e.pageY);
+        console.log(createPixel(e.clientX, e.clientY, 255));
         socket.emit('click', createPixel(e.clientX, e.clientY, 255));
+
+        // send the pixel to the server
+        // socket.emit('click', createPixel(e.clientX, e.clientY, 255));
 
     });
 
