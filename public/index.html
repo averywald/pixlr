@@ -8,16 +8,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="palette">
-        <div class="color" id="r" style="background-color: red;"></div>
-        <div class="color" id="o" style="background-color: orange;"></div>
-        <div class="color" id="y" style="background-color: yellow;"></div>
-        <div class="color" id="g" style="background-color: green;"></div>
-        <div class="color" id="b" style="background-color: blue;"></div>
-        <div class="color" id="i" style="background-color: indigo;"></div>
-        <div class="color" id="v" style="background-color: violet;"></div>
-    </div>
+    <input type="color" name="palette" id="palette" value="#ff0000" onchange="setColor()">
     <canvas id="pixl"></canvas>
 </body>
+<script src="./palette.js"></script>
 <script src="./pixl.js"></script>
 </html>

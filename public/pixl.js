@@ -15,7 +15,6 @@ function clipClickToBounds(coord) {
 }
 
 function getColorIndicesForCoord(x, y) {
-    // REF: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
     const red = y * (canv.pageX * 4) + x * 4;
     return {
         r: red,
@@ -27,6 +26,8 @@ function getColorIndicesForCoord(x, y) {
 
 // initialize a pixel instance based on user input
 function createPixel(x, y, color) {
+    console.log(color);
+
     // sanitize coordinates
     let newX = clipClickToBounds(x);
     let newY = clipClickToBounds(y);
@@ -37,12 +38,11 @@ function createPixel(x, y, color) {
     const img = context.createImageData(PIXELSIZE, PIXELSIZE);
 
     // paint the imagedata nodes with a color value
-    // REF: https://www.w3schools.com/tags/canvas_createimagedata.asp
     for (var i = 0; i < img.data.length; i += 4) {
-        img.data[i + 0] = 255;  // r
-        img.data[i + 1] = 0;    // g
-        img.data[i + 2] = 0;    // b
-        img.data[i + 3] = 255;  // a
+        img.data[i + 0] = color.r;
+        img.data[i + 1] = color.g;
+        img.data[i + 2] = color.b;
+        img.data[i + 3] = 255; // a
     }
 
     let pixl = {
@@ -79,7 +79,7 @@ async function getUpdates() {
 }
 
 function renderUpdates(data) {
-    let p = createPixel(data.coordinates.x, data.coordinates.y, 255);
+    let p = createPixel(data.coordinates.x, data.coordinates.y, data.rgbaVals);
     canv.getContext('2d').putImageData(p.imgData, p.coordinates.x, p.coordinates.y);
  }
 
@@ -115,7 +115,7 @@ window.onload = () => {
     canv.addEventListener('click', (e) => {
 
         // send the pixel to the server
-        socket.emit('click', createPixel(e.clientX, e.clientY, 255));
+        socket.emit('click', createPixel(e.clientX, e.clientY, COLOR));
 
     });
 
