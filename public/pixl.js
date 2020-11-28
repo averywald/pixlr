@@ -1,27 +1,22 @@
-// TODO:
-    // create global values for pixel creation/rendering
-        // color-code values
-
 // pixel width and height (in real pixels)
 const PIXELSIZE = 10;
 
 // get the canvas element from DOM
 var canv = document.getElementById('pixl');
 
-// get the dimensions of the canvas element
-const cWidth = canv.width, cHeight = canv.height;
+// resize canvas
+canv.width = window.innerWidth;
+canv.height = window.innerHeight;
 
 // adjust the pixel's coordinates to conform to grid
 function clipClickToBounds(coord) {
-    // translate click coordinates to point of cursor
-    let newCoord = coord - 1;
     // floor the block coordinate and re-apply coordinate multiple
-    return Math.floor(newCoord / PIXELSIZE) * PIXELSIZE;
+    return Math.floor(coord / PIXELSIZE) * PIXELSIZE;
 }
 
 function getColorIndicesForCoord(x, y) {
     // REF: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
-    const red = y * (cWidth * 4) + x * 4;
+    const red = y * (canv.pageX * 4) + x * 4;
     return {
         r: red,
         g: red + 1,
