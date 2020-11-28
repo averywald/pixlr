@@ -1,22 +1,17 @@
-// TODO:
-    // create global values for pixel creation/rendering
-        // color-code values
-
 // pixel width and height (in real pixels)
 const PIXELSIZE = 10;
 
 // get the canvas element from DOM
 var canv = document.getElementById('pixl');
+
 // resize canvas
 canv.width = window.innerWidth;
 canv.height = window.innerHeight;
 
 // adjust the pixel's coordinates to conform to grid
 function clipClickToBounds(coord) {
-    // translate click coordinates to point of cursor
-    let newCoord = coord - 1;
     // floor the block coordinate and re-apply coordinate multiple
-    return Math.floor(newCoord / PIXELSIZE) * PIXELSIZE;
+    return Math.floor(coord / PIXELSIZE) * PIXELSIZE;
 }
 
 function getColorIndicesForCoord(x, y) {
@@ -119,13 +114,8 @@ window.onload = () => {
     // click event listener on the canvas element
     canv.addEventListener('click', (e) => {
 
-        // debug
-        console.log(e.pageX, e.pageY);
-        console.log(createPixel(e.clientX, e.clientY, 255));
-        socket.emit('click', createPixel(e.clientX, e.clientY, 255));
-
         // send the pixel to the server
-        // socket.emit('click', createPixel(e.clientX, e.clientY, 255));
+        socket.emit('click', createPixel(e.clientX, e.clientY, 255));
 
     });
 
