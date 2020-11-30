@@ -14,10 +14,9 @@ function setColor() {
 
 function hexToRGB(hexVal) {
     // grab the hex value couplets, and convert from hex to int
-    let rgb = {
+    return {
         r: parseInt(hexVal.slice(1, 3), 16),
         g: parseInt(hexVal.slice(3, 5), 16),
         b: parseInt(hexVal.slice(5, 7), 16)
     };
-    return rgb;
 }
