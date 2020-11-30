@@ -1,27 +1,29 @@
-// const bp = require('body-parser');
-// const cors = require('cors');
-const dotenv = require('dotenv');
+const cors = require('cors'); // CORS middleware
+const dotenv = require('dotenv'); // global vars
+const helmet = require('helmet'); // header security
+let mongoClient = require('mongodb').MongoClient; // MongoDB hook
+const morgan = require('morgan'); // request logger
+
+// set up express app
 const express = require('express');
 let app = express();
 
-// const helmet = require('helmet');
+// set up the web server
 const httpServer = require('http').createServer(app);
+// set up socket io and attach it to the web server
 const io = require('socket.io')(httpServer);
-var mongoClient = require('mongodb').MongoClient;
-// const morgan = require('morgan');
-// const path = require('path');
 
-dotenv.config(); // allow for .env global imports
-const port = process.env.PORT || 4200; // specify ports to use
+// allow for .env global imports
+dotenv.config();
+// specify ports to use
+const port = process.env.PORT || 
+    process.env.ALT_PORT;
 
-// const app = express(); // initialize express app
-// app.use([
-//     helmet(), // attach middleware
-//     morgan('dev'), // attach request logger
-//     cors(), // attach CORS management
-//     bp.json() // set up JSON formatting for middleware
-// ]);
-// app.use('/assets', express.static('node_modules')); // serve node_modules
+app.use([
+    helmet(), // attach middleware
+    morgan('dev'), // attach request logger
+    cors() // attach CORS management
+]);
 app.use(express.static('public')); // set up static file serving root
 
 // serve app core
@@ -31,7 +33,6 @@ app.get('/', (res) => {
     const options = {
         // root path to serve from
         root: __dirname,
-        // dotfiles: 'deny',
         // response headers
         headers: {
             'x-timestamp': Date.now(),
@@ -47,6 +48,7 @@ app.get('/', (res) => {
 });
 
 async function retrieve() {
+
     // establish connection to MongoDB
     const client = await mongoClient.connect(process.env.MONGO_URI,
         { useNewUrlParser: true, useUnifiedTopology: true });
@@ -58,10 +60,13 @@ async function retrieve() {
     client.close();
     // hand off data
     return items;
+
 }
 
 async function updateMaster(data) {
+
     try {
+
         // check database for records with the same coordinates
         const filter = { coordinates: { $eq: data.coordinates } };
         // connect to database
@@ -77,14 +82,19 @@ async function updateMaster(data) {
         } else { console.log('created new entry') }
         // close database connection
         client.close();
+
     } catch (error) {
+
         console.log(error);
+
     }
+
 }
 
 // a client connects
 io.on('connection', socket => {
 
+    // 
     function updateClient() {
         // get the canvas master copy
         retrieve().then(data => {
