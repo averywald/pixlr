@@ -18,4 +18,12 @@ window.onload = () => {
 
     });
 
+    // the client presses the 'c' key
+    document.addEventListener('keypress', (e) => {
+        if (e.key === 'c') {
+            // toggle div#colorWheel's visibility
+            toggleColorWheel();
+        }
+    });
+
 };
