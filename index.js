@@ -16,8 +16,7 @@ const io = require('socket.io')(httpServer);
 // allow for .env global imports
 dotenv.config();
 // specify ports to use
-const port = process.env.PORT || 
-    process.env.ALT_PORT;
+const port = process.env.ALT_PORT;
 
 app.use([
     helmet(), // attach middleware
