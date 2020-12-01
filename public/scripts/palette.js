@@ -3,8 +3,6 @@ let rawColor = document.getElementById('palette').value;
 // convert to rgb object
 let COLOR = hexToRGB(rawColor);
 
-let colorWheel = document.getElementById('colorWheel');
-
 function setColor() {
     // get the value from the HTML color picker
     let hexColor = document.getElementById('palette').value;
@@ -21,14 +19,4 @@ function hexToRGB(hexVal) {
         g: parseInt(hexVal.slice(3, 5), 16),
         b: parseInt(hexVal.slice(5, 7), 16)
     };
-}
-
-function toggleColorWheel() {
-    if (colorWheel.style.display === 'none') {
-        // show it
-        colorWheel.style.display = 'block';
-    } else {
-        // hide it
-        colorWheel.style.display = 'none';
-    }
 }
