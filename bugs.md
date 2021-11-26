@@ -1,0 +1,1 @@
+- color-wheel: changing the color doesnt take affect until page reload
