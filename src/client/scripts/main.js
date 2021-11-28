@@ -1,7 +1,7 @@
 window.onload = () => {
 
     // socket.io entry point
-    var socket = io();
+    const socket = io();
 
     // the server sends the client the canvas master copy
     socket.on('update', data => {
