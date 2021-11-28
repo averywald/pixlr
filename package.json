@@ -2,9 +2,9 @@
   "name": "pixlr",
   "version": "0.1.0",
   "description": "a collaborative pixel-art space",
-  "main": "index.js",
+  "main": "src/server/api.js",
   "scripts": {
-    "test": "nodemon index.js"
+    "test": "nodemon src/server/api.js"
   },
   "author": "ave5auce",
   "license": "ISC",
