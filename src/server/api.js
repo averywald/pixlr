@@ -7,10 +7,9 @@ const express = require('express'); // set up express app
 
 // allow for .env global imports
 dotenv.config();
-// specify ports to use
-const port = process.env.ALT_PORT;
 
-let app = express(); // init express web api
+
+var app = express(); // init express web api
 app.use([
     helmet(), // attach middleware
     morgan('dev'), // attach request logger
@@ -25,7 +24,7 @@ app.use(express.static('public')); // set up static file serving root
 app.locals.title = 'pixlr';
 
 // serve app root
-app.get('/', (res, req, next) => {
+app.get('/', (res) => {
 
     // specify options to pass with served file
     const options = {
@@ -45,6 +44,9 @@ app.get('/', (res, req, next) => {
     
 });
 
+// specify ports to use
+const port = process.env.PORT || process.env.ALT_PORT;
+
 // have the app listen to traffic at the set port
 app.listen(port, () => {
 
@@ -54,8 +56,6 @@ app.listen(port, () => {
 });
 
 // socket.io stuff ==========================================================================
-
-import { app } from './api.js';
 
 const httpServer = require('http').createServer(app); // set up the web server via the express API
 const io = require('socket.io')(httpServer); // set up socket io and attach it to the web server
