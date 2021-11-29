@@ -60,22 +60,17 @@ const io = new Server(httpServer); // init socket.io server
 
 // a client connects
 io.on('connection', socket => {
+    // send the client the current master copy
+    updateClient();
 
-    console.log(`api.js -> io['connection']:`);
-    console.log(socket);
+    // client clicks somewhere on the canvas
+    socket.on('click', data => {
+        // update the master canvas copy
+        updateMaster(data);
 
-    // // send the client the current master copy
-    // updateClient();
-
-    // // client clicks somewhere on the canvas
-    // socket.on('click', data => {
-    //     // update the master canvas copy
-    //     updateMaster(data);
-
-    //     // send the updates to the client
-    //     updateClient();
-    // });
-
+        // send the updates to the client
+        updateClient();
+    });
 });
 
 // listen on the port after the express API server
@@ -84,13 +79,12 @@ httpServer.listen(port, () => {
 });
 
 const mongoClient = require('mongodb').MongoClient; // MongoDB hook
-const { symlinkSync, fstat } = require('fs');
 
 function updateClient() {
     // get the canvas master copy
     retrieve().then(data => {
         // send to the client
-        socket.emit('update', data);
+        io.emit('update', data);
     });
 }
 
@@ -100,7 +94,7 @@ async function retrieve() {
     const client = await mongoClient.connect(process.env.MONGO_URI,
         { useNewUrlParser: true, useUnifiedTopology: true });
     // the database we want to use
-    const d = client.db('pixl');
+    const d = client.db(process.env.DB_NAME);
     // get the pixel data from the 'map' table
     const items = await d.collection('map').find({}).toArray();
     // close the connection
@@ -120,7 +114,7 @@ async function updateMaster(data) {
         const client = await mongoClient.connect(process.env.MONGO_URI,
             { useNewUrlParser: true, useUnifiedTopology: true });
         // select main database
-        const d = client.db('pixl');
+        const d = client.db(process.env.DB_NAME);
         // check if pixel exists in database table at the same coordinates
         const result = await d.collection('map').updateOne(filter, { $set: data }, { upsert: true });
         // log result action to console
